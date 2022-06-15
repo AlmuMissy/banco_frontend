@@ -1,41 +1,82 @@
 /*
-Escribe un programa que declare 3 objetos de cada modelo de datos considerado: gestor, cliente, mensaje y transferencia. Los valores de las propiedades de los objetos pueden ser arbitrarios.
+Ejercicio 4.1: El resto de funcionalidades anteriores del programa deben abstraerse en funciones.
 */
 
-const gestor1 = {
-    id: 1,
-    usuario: 'gestor1',
-    password: 'gestor1',
-    correo: 'gestor1@mail.com'
-};
+// const gestores = generarGestores();
+// console.log(gestores);
 
-const gestor2 = {
-    id: 2,
-    usuario: 'gestor2',
-    password: 'gestor2',
-    correo: 'gestor2@mail.com'
-};
+// const gestoresJSON = JSON.stringify(gestores);
+// console.log(gestoresJSON);
+// console.log(gestoresJSON.length);
 
-const cliente1 = {
-    id: 1,
-    id_gestor: 1,
-    usuario: 'cliente1',
-    password: 'cliente1',
-    saldo: 4300.56
-};
+// const clientes = generarClientes();
+// const cliente1 = clientes[0];
+// const cliente1JSON = JSON.stringify(cliente1);
+// console.log(cliente1JSON);
 
-const cliente2 = {
-    id: 2,
-    id_gestor: 1,
-    usuario: 'cliente2',
-    password: 'cliente12',
-    saldo: Math.random() * 1000
-};
+/*
+    Realizar una petición a http://localhost:8085/ok y mostrar la respuesta por pantalla
+*/
 
-console.log(gestor2);
-console.table(cliente2);
+// las propiedades del objeto opciones son: url, metodo, body, cabeceras
+const server='localhost:8085';
+const opciones = {
+    url:'http://localhost:8085/ok',
+    metodo:'GET'
+}
+
+ajax(opciones, (data) => {
+    console.log(data);
+})
 
 
+const opcionesLogin= {
+
+    url:`http://${server}/login/gestor/`,
+    metodo: 'POST',
+    body :'usuario=gestor1&password=gestor1',
+    cabeceras:{
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+}
 
 
+//realiza la petición de login del gestor
+ajax(opcionesLogin, (data) => {
+
+    // esta función se ejecuta cuando los datos han sido
+    // devueltos por el servicio
+
+    // convirtiendo el string en formato JSON a objeto de JavaScript
+    const respuesta = JSON.parse(data);
+
+    // guardamos el token
+    const token = respuesta.data.token;
+
+    // realizamos la solicitud para obtener todos los gestores
+
+    const opcionesObtenerGestores = {
+        url: 'http://localhost:8085/gestores/',
+        metodo: 'GET',
+        cabeceras: {
+            Authorization: `Basic ${token}`
+        }
+    }
+
+    ajax(opcionesObtenerGestores, (data) => {
+        console.log(data);
+
+        // data tiene toda la información de los gestores en formato string
+        console.log(data);
+
+        // convertir a objeto de JavaScript
+        const respuesta = JSON.parse(data);
+
+        const gestores = respuesta.data;
+        mostrarGestores(gestores);
+
+
+
+    });
+});
 
